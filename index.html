@@ -146,14 +146,79 @@ footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--sa
   .pag{padding:76px 20px 88px}
   .fecha .num{font-size:2.6rem}
 }
+
+/* ---------- Efectos ---------- */
+/* Apertura: dos puertas de papel con sello dorado */
+body.cerrado{overflow:hidden}
+.intro{position:fixed;inset:0;z-index:60;display:flex;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.puerta{position:relative;flex:1;background:var(--tarjeta) url("img/fondo.webp") center/cover;background-blend-mode:multiply;transition:transform 1.5s cubic-bezier(.75,0,.2,1);overflow:hidden}
+.puerta::before{content:"";position:absolute;top:18px;bottom:18px;border:2px solid var(--oro-claro)}
+.puerta.izq{box-shadow:inset -10px 0 18px -10px rgba(94,66,32,.35)}
+.puerta.der{box-shadow:inset 10px 0 18px -10px rgba(94,66,32,.35)}
+.puerta.izq::before{left:18px;right:0;border-right:0}
+.puerta.der::before{right:18px;left:0;border-left:0}
+.puerta .flor{position:absolute;width:min(70%,260px);z-index:0}
+.puerta.izq .flor{top:-18px;left:-30px;transform:rotate(180deg) scaleX(-1)}
+.puerta.der .flor{bottom:-18px;right:-30px}
+.intro-centro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;pointer-events:none;transition:opacity .7s ease,transform .9s ease}
+.intro-centro .nombres-n{font-family:var(--script);font-size:clamp(2.4rem,11vw,3.4rem);color:var(--salvia);line-height:1.1;text-shadow:0 2px 6px rgba(93,106,80,.18)}
+.sello{pointer-events:auto;position:relative;width:132px;height:132px;border:0;border-radius:50%;cursor:pointer;display:grid;place-items:center;
+  background:radial-gradient(circle at 34% 28%,#f2dc9c 0%,#c9a24a 42%,#9a7426 78%,#7c5b1b 100%);
+  box-shadow:inset 0 0 0 7px rgba(255,248,225,.16),inset 0 -8px 14px rgba(60,40,10,.35),0 10px 22px -6px rgba(94,66,32,.55);
+  font-family:var(--script);font-size:2.9rem;color:#fff7e2;text-shadow:0 1px 2px rgba(60,40,10,.5);animation:latir 2.6s ease-in-out infinite}
+.sello::before{content:"";position:absolute;inset:12px;border-radius:50%;border:1.5px dashed rgba(255,247,226,.55)}
+.sello:focus-visible{outline:3px solid var(--salvia);outline-offset:6px}
+.intro-para{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:6px}
+.intro-para small{font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;color:var(--oro)}
+.intro-para span{font-family:var(--script);font-size:clamp(1.7rem,7.5vw,2.2rem);color:var(--cafe);line-height:1.15}
+.intro-toca{font-style:italic;color:var(--cafe);font-size:1.02rem;animation:respirar 2.2s ease-in-out infinite}
+.intro.abierta{pointer-events:none}
+.intro.abierta .izq{transform:translateX(-102%)}
+.intro.abierta .der{transform:translateX(102%)}
+.intro.abierta .intro-centro{opacity:0;transform:scale(1.12)}
+@keyframes latir{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes respirar{0%,100%{opacity:.55}50%{opacity:1}}
+
+/* Pétalos */
+#petalos{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
+
+/* Aparición al bajar */
+.js-reveal .pag:not(.portada){opacity:0;transform:translateY(36px) scale(.985);transition:opacity 1s ease,transform 1.1s cubic-bezier(.2,.7,.2,1)}
+.js-reveal .pag.visto{opacity:1;transform:none}
+.js-reveal .pag .dato{opacity:0;transform:translateX(-14px);transition:opacity .7s ease,transform .7s ease}
+.js-reveal .pag.visto .dato{opacity:1;transform:none}
+.js-reveal .pag.visto .dato:nth-child(2){transition-delay:.15s}
+.js-reveal .pag.visto .dato:nth-child(3){transition-delay:.3s}
+
+/* Brillo dorado en títulos */
+.brillo{background:linear-gradient(100deg,var(--oro) 0%,var(--oro) 38%,#f6e1a3 50%,var(--oro) 62%,var(--oro) 100%);background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;animation:brillo 5s linear infinite}
+@keyframes brillo{from{background-position:130% 0}to{background-position:-130% 0}}
+.btn-oro{animation:flotar 3.2s ease-in-out infinite}
+@keyframes flotar{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.cuenta b.tic{animation:tic .45s ease}
+@keyframes tic{0%{transform:translateY(-6px);opacity:.3}100%{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){
   .hex .marco{animation:none}
   .btn,.btn-oro{transition:none}
+  .sello,.intro-toca,.btn-oro,.brillo,.cuenta b.tic{animation:none}
+  .brillo{color:var(--oro)!important;background:none}
+  .puerta,.intro-centro{transition-duration:.01s}
 }
 </style>
 
 </head>
-<body>
+<body class="cerrado">
+<div class="intro" id="intro" role="dialog" aria-label="Abrir invitación">
+  <div class="puerta izq"><img class="flor" src="img/flores.webp" alt=""></div>
+  <div class="puerta der"><img class="flor" src="img/flores.webp" alt=""></div>
+  <div class="intro-centro">
+    <div class="nombres-n">Natalia &amp; Benjamín</div>
+    <button class="sello" id="sello" type="button" aria-label="Abrir la invitación">N&amp;B</button>
+    <div class="intro-para" id="intro-para" hidden><small>Invitación para</small></div>
+    <p class="intro-toca">Toca el sello para abrir</p>
+  </div>
+</div>
+<canvas id="petalos" aria-hidden="true"></canvas>
 <main>
 
   <!-- Portada -->
@@ -210,10 +275,10 @@ footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--sa
     <img class="flor tl" src="img/flores.webp" alt="">
     <img class="flor br" src="img/flores.webp" alt="">
     <img class="iglesia" src="img/iglesia.webp" alt="Ilustración de una iglesia">
-    <h2 id="t-ceremonia" class="script">Ceremonia</h2>
+    <h2 id="t-ceremonia" class="script brillo">Ceremonia</h2>
     <p class="lugar">Iglesia San Francisco Javier<br>Peralillo</p>
     <div class="fecha" aria-label="Sábado 30 de enero de 2027, 17:30 horas">
-      <hr class="linea"><span class="num">30</span><hr class="linea">
+      <hr class="linea"><span class="num brillo">30</span><hr class="linea">
     </div>
     <div class="fecha-info" aria-hidden="true">
       <span>SÁBADO</span>
@@ -237,7 +302,7 @@ footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--sa
     <img class="flor tl" src="img/flores.webp" alt="">
     <img class="flor br" src="img/flores.webp" alt="">
     <div class="fiesta-head">
-      <h2 id="t-fiesta" class="script">La Fiesta</h2>
+      <h2 id="t-fiesta" class="script brillo">La Fiesta</h2>
       <img src="img/couple.webp" alt="">
     </div>
     <div class="datos">
@@ -339,6 +404,73 @@ footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--sa
     function fallback(){var r=document.createRange();r.selectNodeContents(document.getElementById("codigo"));var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Código seleccionado"}
     try{navigator.clipboard.writeText(code).then(ok,fallback)}catch(e){fallback()}
   });
+})();
+</script>
+
+<script>
+/* ---------- Efectos ---------- */
+(function(){
+  var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var body=document.body,intro=document.getElementById("intro");
+
+  // Nombres del invitado en la apertura
+  var lineas=document.querySelectorAll("#invitado .linea-nombre");
+  if(lineas.length){
+    var ip=document.getElementById("intro-para");
+    lineas.forEach(function(l){var s=document.createElement("span");s.textContent=l.textContent;ip.appendChild(s)});
+    ip.hidden=false;
+  }
+
+  // Abrir puertas
+  var abierto=false;
+  function abrir(){
+    if(abierto)return;abierto=true;
+    intro.classList.add("abierta");body.classList.remove("cerrado");
+    setTimeout(function(){intro.remove()},reduce?50:1600);
+    if(!reduce)setTimeout(petalos,500);
+  }
+  intro.addEventListener("click",abrir);
+  document.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "||e.key==="Escape")abrir()});
+
+  // Aparición de secciones al bajar
+  if(!reduce&&"IntersectionObserver" in window){
+    document.documentElement.classList.add("js-reveal");
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("visto");io.unobserve(e.target)}})},{threshold:.12,rootMargin:"0px 0px -6% 0px"});
+    document.querySelectorAll(".pag:not(.portada)").forEach(function(el){io.observe(el)});
+  }
+
+  // Animación suave de los números de la cuenta regresiva
+  if(!reduce&&"MutationObserver" in window){
+    document.querySelectorAll(".cuenta b").forEach(function(b){
+      new MutationObserver(function(){b.classList.remove("tic");void b.offsetWidth;b.classList.add("tic")}).observe(b,{childList:true,characterData:true,subtree:true});
+    });
+  }
+
+  // Pétalos cayendo
+  function petalos(){
+    var c=document.getElementById("petalos");if(!c||!c.getContext)return;
+    var ctx=c.getContext("2d"),W,H,dpr=Math.min(window.devicePixelRatio||1,2);
+    var colores=[["#f3d2dc","#d9a3b5"],["#d8ccef","#a993d6"],["#fffaf0","#e9dcc0"],["#f2dfa6","#c9a24a"]];
+    function size(){W=c.clientWidth;H=c.clientHeight;c.width=W*dpr;c.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+    size();addEventListener("resize",size);
+    var N=W<600?16:26,ps=[];
+    function nuevo(inicio){return{x:Math.random()*W,y:inicio?Math.random()*-H:-20,r:5+Math.random()*7,vy:.45+Math.random()*.8,vx:-.2+Math.random()*.4,
+      a:Math.random()*6.28,va:-.02+Math.random()*.04,f:Math.random()*6.28,vf:.01+Math.random()*.02,c:colores[Math.floor(Math.random()*colores.length)],o:.55+Math.random()*.35}}
+    for(var i=0;i<N;i++)ps.push(nuevo(true));
+    var activo=true;document.addEventListener("visibilitychange",function(){activo=!document.hidden;if(activo)requestAnimationFrame(paso)});
+    function dibuja(p){
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.scale(1,.55+.45*Math.sin(p.f));ctx.globalAlpha=p.o;
+      var g=ctx.createRadialGradient(-p.r*.3,-p.r*.3,1,0,0,p.r);g.addColorStop(0,p.c[0]);g.addColorStop(1,p.c[1]);
+      ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(0,-p.r);ctx.bezierCurveTo(p.r,-p.r*.6,p.r*.8,p.r*.7,0,p.r);ctx.bezierCurveTo(-p.r*.8,p.r*.7,-p.r,-p.r*.6,0,-p.r);ctx.fill();ctx.restore();
+    }
+    function paso(){
+      if(!activo)return;
+      ctx.clearRect(0,0,W,H);
+      for(var i=0;i<ps.length;i++){var p=ps[i];p.y+=p.vy;p.x+=p.vx+Math.sin(p.f)*.35;p.a+=p.va;p.f+=p.vf;if(p.y>H+20||p.x<-30||p.x>W+30)ps[i]=nuevo(false);dibuja(p)}
+      requestAnimationFrame(paso);
+    }
+    requestAnimationFrame(paso);
+  }
 })();
 </script>
 
