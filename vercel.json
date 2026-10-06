@@ -1,0 +1,6 @@
+{
+  "cleanUrls": true,
+  "headers": [
+    { "source": "/generador/(.*)", "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }] }
+  ]
+}

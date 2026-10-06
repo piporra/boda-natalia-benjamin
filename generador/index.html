@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Links de Invitados</title>
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Work+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: herramienta de una columna. Arriba la lista que pegas; abajo una fila por invitado con su link y botones de envío. Mismo papel claro de la invitación. */
+:root{
+  --papel:#fbf8f1;
+  --tarjeta:#fffdf9;
+  --borde:#e6d9bb;
+  --oro:#a8812f;
+  --cafe:#5e4220;
+  --tinta:#3a3128;
+  --suave:#7d6f5e;
+  --verde:#2f7d4f;
+  --script:"Pinyon Script",cursive;
+  --titulo:"Cormorant Garamond",Georgia,serif;
+  --ui:"Work Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+body{background:var(--papel);color:var(--tinta);font-family:var(--ui);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:28px 56px}
+main{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+header h1{font-family:var(--script);font-weight:400;font-size:2.8rem;color:var(--cafe);margin:0;line-height:1.1}
+header p{margin:4px 0 0;color:var(--suave);max-width:60ch}
+.caja{background:var(--tarjeta);border:1px solid var(--borde);border-radius:10px;padding:18px}
+label{display:block;font-weight:600;color:var(--cafe);margin-bottom:6px}
+.ayuda{font-size:.86rem;color:var(--suave);margin:0 0 10px}
+.ayuda code{background:#f3ead6;padding:1px 5px;border-radius:4px;font-size:.84rem}
+textarea{width:100%;box-sizing:border-box;min-height:150px;resize:vertical;font:inherit;font-size:15px;line-height:1.55;padding:10px 12px;border:1px solid var(--borde);border-radius:8px;background:#fff;color:var(--tinta)}
+textarea:focus{outline:2px solid var(--oro);outline-offset:1px}
+.fila-ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+button,.b{font:inherit;font-weight:500;font-size:.88rem;border-radius:999px;padding:7px 14px;cursor:pointer;border:1px solid var(--oro);background:var(--tarjeta);color:var(--cafe);text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+button:hover,.b:hover{background:#f6edd8}
+button:focus-visible,.b:focus-visible{outline:2px solid var(--oro);outline-offset:2px}
+.primario{background:var(--oro);color:#fff;border-color:var(--oro)}
+.primario:hover{background:#946f24}
+.wa{border-color:var(--verde);color:var(--verde)}
+.wa:hover{background:#eaf5ee}
+.contador{font-size:.88rem;color:var(--suave)}
+.lista{display:flex;flex-direction:column;gap:10px}
+.inv{display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:center;background:var(--tarjeta);border:1px solid var(--borde);border-radius:10px;padding:14px 16px}
+.inv .quien{min-width:0}
+.inv .nombre{font-family:var(--titulo);font-weight:600;font-size:1.3rem;color:var(--cafe);line-height:1.2}
+.inv .cupos{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--oro);font-weight:600}
+.inv .url{grid-column:1/-1;font-size:.78rem;color:var(--suave);word-break:break-all;background:#faf4e6;border-radius:6px;padding:6px 8px;user-select:all}
+.inv .acc{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.inv.enviado{opacity:.62}
+.check{font-size:.82rem;color:var(--verde);font-weight:600}
+.vacio{text-align:center;color:var(--suave);padding:26px 10px;border:1px dashed var(--borde);border-radius:10px}
+.msg{margin-top:4px}
+.msg textarea{min-height:110px}
+@media (max-width:560px){
+  .inv{grid-template-columns:1fr}
+  .inv .acc{justify-content:flex-start}
+}
+</style>
+
+</head>
+<body>
+<main>
+  <header>
+    <h1>Natalia &amp; Benjamín</h1>
+    <p>Escribe a tus invitados y obtén un link personalizado para cada uno. La invitación mostrará su nombre y la cantidad de cupos.</p>
+  </header>
+
+  <section class="caja">
+    <label for="entrada">Lista de invitados</label>
+    <p class="ayuda">Uno por línea: <code>Nombre, cupos</code>. Si no pones cupos, queda en 2.</p>
+    <textarea id="entrada" spellcheck="false">Familia Pérez Soto, 4
+Juan Carlos y María José, 2
+Tía Carmen, 1</textarea>
+    <div class="fila-ctrl">
+      <button class="primario" id="generar" type="button">Generar links</button>
+      <span class="contador" id="contador"></span>
+    </div>
+  </section>
+
+  <section class="caja msg">
+    <label for="mensaje">Mensaje de WhatsApp</label>
+    <p class="ayuda"><code>{nombre}</code> y <code>{link}</code> se reemplazan por los datos de cada invitado.</p>
+    <textarea id="mensaje">Hola {nombre} 💐
+Con mucho cariño te enviamos la invitación a nuestro matrimonio. Ábrela aquí:
+{link}
+
+Natalia y Benjamín</textarea>
+  </section>
+
+  <section class="lista" id="lista" aria-live="polite"></section>
+</main>
+
+<script>
+(function(){
+  var BASE=location.origin+"/";
+  var $=function(id){return document.getElementById(id)};
+  var enviados={};
+
+  function guardar(){try{localStorage.setItem("inv-lista",$("entrada").value);localStorage.setItem("inv-msg",$("mensaje").value);localStorage.setItem("inv-env",JSON.stringify(enviados))}catch(e){}}
+  try{
+    var l=localStorage.getItem("inv-lista");if(l!==null)$("entrada").value=l;
+    var m=localStorage.getItem("inv-msg");if(m!==null)$("mensaje").value=m;
+    enviados=JSON.parse(localStorage.getItem("inv-env")||"{}")||{};
+  }catch(e){}
+
+  function codificar(cupos,nombre){
+    var bytes=new TextEncoder().encode(cupos+"|"+nombre),bin="";
+    for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);
+    return "g"+btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+  }
+
+  function leer(){
+    return $("entrada").value.split("\n").map(function(l){
+      l=l.trim();if(!l)return null;
+      var m=l.match(/^(.*?)[,;\t]\s*(\d{1,2})\s*$/);
+      var nombre=(m?m[1]:l).trim(),cupos=m?parseInt(m[2],10):2;
+      if(!nombre)return null;
+      return {nombre:nombre,cupos:cupos,link:BASE+"#"+codificar(cupos,nombre)};
+    }).filter(Boolean);
+  }
+
+  function texto(inv){return $("mensaje").value.split("{nombre}").join(inv.nombre).split("{link}").join(inv.link)}
+
+  function copiar(t,btn,ok){
+    function bien(){var o=btn.textContent;btn.textContent=ok;setTimeout(function(){btn.textContent=o},1800)}
+    try{navigator.clipboard.writeText(t).then(bien,function(){btn.textContent="Selecciona el link y cópialo"})}catch(e){btn.textContent="Selecciona el link y cópialo"}
+  }
+
+  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+
+  function pintar(){
+    var invs=leer(),lista=$("lista");lista.innerHTML="";
+    $("contador").textContent=invs.length?invs.length+" invitaciones · "+invs.reduce(function(a,b){return a+b.cupos},0)+" cupos en total":"";
+    if(!invs.length){lista.appendChild(el("p","vacio","Agrega al menos un invitado arriba para ver su link."));return}
+    invs.forEach(function(inv){
+      var card=el("article","inv"+(enviados[inv.link]?" enviado":""));
+      var quien=el("div","quien");
+      quien.appendChild(el("div","nombre",inv.nombre));
+      quien.appendChild(el("div","cupos","Pase para "+inv.cupos));
+      var acc=el("div","acc");
+      var bc=el("button",null,"Copiar link");bc.type="button";
+      bc.onclick=function(){copiar(inv.link,bc,"Link copiado")};
+      var bm=el("button",null,"Copiar mensaje");bm.type="button";
+      bm.onclick=function(){copiar(texto(inv),bm,"Mensaje copiado")};
+      var wa=el("a","b wa","WhatsApp");wa.href="https://wa.me/?text="+encodeURIComponent(texto(inv));wa.target="_blank";wa.rel="noopener";
+      wa.onclick=function(){enviados[inv.link]=1;card.classList.add("enviado");guardar()};
+      var ver=el("a","b","Ver");ver.href=inv.link;ver.target="_blank";ver.rel="noopener";
+      acc.append(bc,bm,wa,ver);
+      if(enviados[inv.link])acc.appendChild(el("span","check","✓ Enviado"));
+      card.append(quien,acc,el("div","url",inv.link));
+      lista.appendChild(card);
+    });
+  }
+
+  $("generar").onclick=function(){guardar();pintar()};
+  $("entrada").addEventListener("input",function(){guardar()});
+  $("mensaje").addEventListener("input",function(){guardar();pintar()});
+  pintar();
+})();
+</script>
+
+</body>
+</html>
