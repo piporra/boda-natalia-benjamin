@@ -296,10 +296,13 @@ footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--sa
       cupos=parseInt(txt.slice(0,k),10);nombre=txt.slice(k+1).trim();
     }catch(e){}
   }
-  // Formulario de confirmación: 1 cupo -> formulario individual; 2 o más -> formulario grupal (por defecto)
-  if(cupos===1){
-    document.getElementById("form-link").href="https://docs.google.com/forms/d/e/1FAIpQLSercUN02L5OoC0JCWtHvDuGhPpgqud17tTmW_Y_Co8kRzapHw/viewform?usp=header";
-  }
+  // Formulario de confirmación según cupos: 1 -> individual; 2 -> pareja (por defecto); 3 o más -> grupal
+  var FORM={
+    1:"https://docs.google.com/forms/d/e/1FAIpQLSercUN02L5OoC0JCWtHvDuGhPpgqud17tTmW_Y_Co8kRzapHw/viewform?usp=header",
+    3:"https://docs.google.com/forms/d/e/1FAIpQLSfV8slQC12RjHW35UwxvuNQAhBubyCE5_7yekCRyJpQ_oJnrw/viewform?usp=header"
+  };
+  if(cupos===1)document.getElementById("form-link").href=FORM[1];
+  else if(cupos>=3)document.getElementById("form-link").href=FORM[3];
   if(cupos>0){
     document.getElementById("pase").textContent="Pase para "+cupos;
     if(cupos>1)document.getElementById("verbo").textContent="invitarlos";
