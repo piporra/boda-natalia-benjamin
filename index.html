@@ -23,8 +23,8 @@
 <style>
 /* Layout: una columna de "tarjetas" como las páginas de la invitación, con flores acuarela en esquinas y marcos dorados. Look único (papel claro) a propósito. */
 :root{
-  --papel:#fbf8f1;
-  --tarjeta:#fffdf9;
+  --papel:#e9dcc0;
+  --tarjeta:#fbf4e4;
   --salvia:#5d6a50;
   --oro:#a8812f;
   --oro-claro:#d9bf7c;
@@ -36,9 +36,10 @@
   color-scheme:light;
 }
 html{background:var(--papel)}
-body{background:var(--papel) url("img/fondo.webp") center/600px repeat;color:var(--tinta);font-family:var(--texto);font-size:19px;line-height:1.55;padding-inline:16px;padding-block:24px 48px;overflow-x:hidden}
+body{background:var(--papel) url("img/fondo.webp") center/520px repeat;background-blend-mode:multiply;color:var(--tinta);font-family:var(--texto);font-size:19px;line-height:1.55;padding-inline:16px;padding-block:24px 48px;overflow-x:hidden}
 main{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
-.pag{position:relative;background:var(--tarjeta);padding:84px 28px 92px;text-align:center;box-shadow:0 1px 2px rgba(94,66,32,.08),0 12px 32px -18px rgba(94,66,32,.35);overflow:hidden;isolation:isolate}
+.pag{position:relative;background:var(--tarjeta) url("img/fondo.webp") center/cover;background-blend-mode:multiply;padding:84px 28px 92px;text-align:center;box-shadow:0 1px 2px rgba(94,66,32,.08),0 12px 32px -18px rgba(94,66,32,.35);overflow:hidden;isolation:isolate}
+.pag::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .35 0 0 0 0 .2 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.35;mix-blend-mode:multiply;pointer-events:none;z-index:-2}
 .pag::before{content:"";position:absolute;inset:14px;border:2px solid var(--oro-claro);pointer-events:none;z-index:-1;background:linear-gradient(90deg,transparent,transparent)}
 .flor{position:absolute;width:40%;max-width:220px;pointer-events:none;z-index:-1}
 .flor.tl{top:-22px;left:-34px;transform:rotate(180deg) scaleX(-1)}
@@ -80,8 +81,8 @@ p{margin:0}
 .rosas img{width:30%;margin:0 -5%}
 .rosas img:nth-child(2){width:34%;z-index:1;margin-top:-6px}
 .invita{font-size:clamp(2.1rem,9.5vw,2.7rem);color:var(--cafe);margin-top:8px}
-.padres{display:flex;flex-direction:column;margin:26px 0 22px}
-.padres .script{font-size:clamp(1.9rem,8.5vw,2.4rem);color:var(--salvia)}
+.invita{margin-bottom:26px}
+.invitado~.pase{margin-top:0}
 .pase{display:inline-block;font-family:var(--script);font-size:2.3rem;color:var(--cafe);padding:2px 26px;border-top:1px solid var(--oro-claro);border-bottom:1px solid var(--oro-claro)}
 
 /* Ceremonia */
@@ -131,10 +132,10 @@ p{margin:0}
 .copiar{margin-top:10px;background:none;border:0;font:inherit;font-size:.92rem;color:var(--oro);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:4px 8px}
 .copiar:focus-visible{outline:2px solid var(--salvia);border-radius:4px}
 
-.para{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:34px}
+.para{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:64px}
 .para small{font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--oro)}
 .para .script{font-size:clamp(2rem,9vw,2.6rem);color:var(--cafe);text-wrap:balance}
-.invitado{font-family:var(--script);font-size:clamp(2rem,9vw,2.5rem);color:var(--cafe);line-height:1.15;margin-bottom:10px;text-wrap:balance}
+.invitado{font-family:var(--script);font-size:clamp(2rem,9vw,2.5rem);color:var(--salvia);line-height:1.15;margin:26px 0 14px;text-wrap:balance}
 footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--salvia);margin-top:6px}
 
 @media (max-width:420px){
@@ -201,10 +202,6 @@ footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--sa
       </div>
     </div>
     <h2 id="t-invita" class="script invita">Tenemos el honor de <span id="verbo">invitarte</span> a nuestra Boda</h2>
-    <div class="padres">
-      <span class="script">Jesús Cáceres Carreño</span>
-      <span class="script">Elena Abarca Leiva</span>
-    </div>
     <p class="invitado" id="invitado" hidden></p>
     <span class="pase" id="pase">Pase para 2</span>
   </section>
