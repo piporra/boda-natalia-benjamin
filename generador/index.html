@@ -125,7 +125,8 @@ Natalia y Benjamín</textarea>
     }).filter(Boolean);
   }
 
-  function texto(inv){return $("mensaje").value.split("{nombre}").join(inv.nombre).split("{link}").join(inv.link)}
+  function bonito(n){var p=n.split(/\s*,\s*/).filter(Boolean);return p.length>1?p.slice(0,-1).join(", ")+" y "+p[p.length-1]:n}
+  function texto(inv){return $("mensaje").value.split("{nombre}").join(bonito(inv.nombre)).split("{link}").join(inv.link)}
 
   function copiar(t,btn,ok){
     function bien(){var o=btn.textContent;btn.textContent=ok;setTimeout(function(){btn.textContent=o},1800)}

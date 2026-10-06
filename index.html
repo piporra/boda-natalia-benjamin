@@ -136,6 +136,7 @@ p{margin:0}
 .para small{font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--oro)}
 .para .script{font-size:clamp(2rem,9vw,2.6rem);color:var(--cafe);text-wrap:balance}
 .invitado{font-family:var(--script);font-size:clamp(2rem,9vw,2.5rem);color:var(--salvia);line-height:1.15;margin:26px 0 14px;text-wrap:balance}
+.invitado.largo{font-size:clamp(1.6rem,7.2vw,2.1rem);padding-inline:6%}
 footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--salvia);margin-top:6px}
 
 @media (max-width:420px){
@@ -165,10 +166,6 @@ footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--sa
         <p class="cita it">“Un nuevo comienzo, un mismo amor y un para siempre que empieza hoy.”</p>
       </div>
       <img class="rosa abajo" src="img/rosa.webp" alt="">
-    </div>
-    <div class="para" id="para" hidden>
-      <small>Invitación para</small>
-      <span class="script" id="para-nombre"></span>
     </div>
   </section>
 
@@ -303,9 +300,11 @@ footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--sa
     if(cupos>1)document.getElementById("verbo").textContent="invitarlos";
   }
   if(nombre){
-    document.getElementById("para-nombre").textContent=nombre;
-    document.getElementById("para").hidden=false;
+    // "Ana Pérez, Juan Soto, Luis" -> "Ana Pérez, Juan Soto y Luis"
+    var partes=nombre.split(/\s*,\s*/).filter(Boolean);
+    if(partes.length>1)nombre=partes.slice(0,-1).join(", ")+" y "+partes[partes.length-1];
     var inv=document.getElementById("invitado");inv.textContent=nombre;inv.hidden=false;
+    if(nombre.length>28)inv.classList.add("largo");
     document.title="Invitación para "+nombre;
   }
 
