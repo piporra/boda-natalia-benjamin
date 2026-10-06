@@ -264,7 +264,7 @@ footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--sa
     <img class="flor tl" src="img/flores.webp" alt="">
     <img class="flor br" src="img/flores.webp" alt="">
     <h2 id="t-confirma" class="script" style="color:var(--cafe)">Confirma tu Asistencia</h2>
-    <a class="btn-oro" href="https://docs.google.com/forms/d/e/1FAIpQLScCIruN5CtKP4yFlY-OdSpvB6maTONDj61caIWXQXFJjoOT0Q/viewform?usp=header" target="_blank" rel="noopener"><span>Haz click aquí</span></a>
+    <a class="btn-oro" id="form-link" href="https://docs.google.com/forms/d/e/1FAIpQLScCIruN5CtKP4yFlY-OdSpvB6maTONDj61caIWXQXFJjoOT0Q/viewform?usp=header" target="_blank" rel="noopener"><span>Haz click aquí</span></a>
 
     <h3 class="script salvia lista-t">Código mi lista de Novios</h3>
     <p class="codigo" id="codigo">C041028</p>
@@ -295,6 +295,10 @@ footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--sa
       var txt=new TextDecoder().decode(bytes),k=txt.indexOf("|");
       cupos=parseInt(txt.slice(0,k),10);nombre=txt.slice(k+1).trim();
     }catch(e){}
+  }
+  // Formulario de confirmación: 1 cupo -> formulario individual; 2 o más -> formulario grupal (por defecto)
+  if(cupos===1){
+    document.getElementById("form-link").href="https://docs.google.com/forms/d/e/1FAIpQLSercUN02L5OoC0JCWtHvDuGhPpgqud17tTmW_Y_Co8kRzapHw/viewform?usp=header";
   }
   if(cupos>0){
     document.getElementById("pase").textContent="Pase para "+cupos;
