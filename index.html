@@ -136,6 +136,7 @@ p{margin:0}
 .para small{font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--oro)}
 .para .script{font-size:clamp(2rem,9vw,2.6rem);color:var(--cafe);text-wrap:balance}
 .invitado{font-family:var(--script);font-size:clamp(2rem,9vw,2.5rem);color:var(--salvia);line-height:1.15;margin:26px 0 14px;text-wrap:balance}
+.linea-nombre{display:block}
 .invitado.largo{font-size:clamp(1.6rem,7.2vw,2.1rem);padding-inline:6%}
 footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--salvia);margin-top:6px}
 
@@ -300,11 +301,12 @@ footer{text-align:center;font-family:var(--script);font-size:2rem;color:var(--sa
     if(cupos>1)document.getElementById("verbo").textContent="invitarlos";
   }
   if(nombre){
-    // "Ana Pérez, Juan Soto, Luis" -> "Ana Pérez, Juan Soto y Luis"
+    // Un nombre por línea: "Ana Pérez, Juan Soto" -> Ana Pérez / Juan Soto
     var partes=nombre.split(/\s*,\s*/).filter(Boolean);
-    if(partes.length>1)nombre=partes.slice(0,-1).join(", ")+" y "+partes[partes.length-1];
-    var inv=document.getElementById("invitado");inv.textContent=nombre;inv.hidden=false;
-    if(nombre.length>28)inv.classList.add("largo");
+    var inv=document.getElementById("invitado");inv.hidden=false;
+    partes.forEach(function(n){var l=document.createElement("span");l.className="linea-nombre";l.textContent=n;inv.appendChild(l)});
+    if(partes.some(function(n){return n.length>24}))inv.classList.add("largo");
+    nombre=partes.join(", ");
     document.title="Invitación para "+nombre;
   }
 
