@@ -188,6 +188,7 @@ body.cerrado{overflow:hidden}
 .musica .ic-pausa{display:none}
 .musica.sonando .ic-nota{display:none}
 .musica.sonando .ic-pausa{display:block}
+.musica.invita{animation:latir 1.4s ease-in-out infinite;background:radial-gradient(circle at 35% 30%,#f2dc9c,#c9a24a);color:#fff7e2;border-color:#9a7426}
 .musica.sonando::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1.5px solid var(--oro-claro);animation:onda 2s ease-out infinite}
 @keyframes onda{from{transform:scale(.9);opacity:.9}to{transform:scale(1.35);opacity:0}}
 
@@ -212,7 +213,7 @@ body.cerrado{overflow:hidden}
 @media (prefers-reduced-motion:reduce){
   .hex .marco{animation:none}
   .btn,.btn-oro{transition:none}
-  .sello,.intro-toca,.btn-oro,.brillo,.cuenta b.tic,.musica.sonando::after{animation:none}
+  .sello,.intro-toca,.btn-oro,.brillo,.cuenta b.tic,.musica.sonando::after,.musica.invita{animation:none}
   .brillo{color:var(--oro)!important;background:none}
   .puerta,.intro-centro{transition-duration:.01s}
 }
@@ -231,7 +232,7 @@ body.cerrado{overflow:hidden}
   </div>
 </div>
 <canvas id="petalos" aria-hidden="true"></canvas>
-<audio id="cancion" src="musica/bailando-bachata.mp3" preload="none" loop></audio>
+<audio id="cancion" preload="none" loop playsinline></audio>
 <button class="musica" id="btn-musica" type="button" aria-label="Pausar música" hidden>
   <svg class="ic-nota" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 18.5a3 3 0 1 1-2-2.83V5.5l12-2.5v11.5a3 3 0 1 1-2-2.83V7.6L9 9.3v9.2z"/></svg>
   <svg class="ic-pausa" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg>
@@ -449,20 +450,35 @@ body.cerrado{overflow:hidden}
   }
 
   // Música: parte al tocar el sello (los celulares exigen un toque antes de reproducir sonido)
-  var audio=document.getElementById("cancion"),bm=document.getElementById("btn-musica"),quiere=false;
-  function estado(on){bm.classList.toggle("sonando",on);bm.setAttribute("aria-label",on?"Pausar música":"Reproducir música")}
-  function subir(){try{audio.volume=0;var v=0,t=setInterval(function(){v+=.05;if(v>=.7){v=.7;clearInterval(t)}audio.volume=v},120)}catch(e){}}
+  var SRC="musica/bailando-bachata.mp3?v=3";
+  var audio=document.getElementById("cancion"),bm=document.getElementById("btn-musica"),quiere=false,pausaManual=false;
+  function estado(on){bm.classList.toggle("sonando",on);bm.classList.toggle("invita",!on&&!pausaManual);bm.setAttribute("aria-label",on?"Pausar música":"Reproducir música")}
+  function subir(){try{audio.volume=0;var v=0,t=setInterval(function(){v+=.05;if(v>=.7){v=.7;clearInterval(t)}try{audio.volume=v}catch(e){}},120)}catch(e){}}
+  var cargando=false;
+  function intentar(fresco){
+    if(cargando)return;
+    if(fresco||audio.error){audio.src=SRC+"&t="+Date.now();audio.load()}
+    var pr;try{pr=audio.play()}catch(e){}
+    if(pr&&pr.then){cargando=true;pr.then(function(){cargando=false;estado(true)},function(){cargando=false;estado(false)})}
+  }
   function tocar(){
-    if(!audio)return;quiere=true;subir();
-    var pr=audio.play();
-    if(pr&&pr.then)pr.then(function(){bm.hidden=false;estado(true)},function(){if(audio.error)bm.hidden=true;else{bm.hidden=false;estado(false)}});
+    if(!audio)return;quiere=true;bm.hidden=false;estado(false);subir();intentar(false);
   }
   if(audio){
-    audio.addEventListener("error",function(){bm.hidden=true});
+    audio.src=SRC;
     audio.addEventListener("play",function(){estado(true)});
     audio.addEventListener("pause",function(){estado(false)});
-    bm.addEventListener("click",function(){if(audio.paused){quiere=true;audio.play().catch(function(){})}else{quiere=false;audio.pause()}});
-    document.addEventListener("visibilitychange",function(){if(document.hidden){if(!audio.paused)audio.pause()}else if(quiere&&abierto){audio.play().catch(function(){})}});
+    bm.addEventListener("click",function(e){
+      e.stopPropagation();
+      if(cargando)return;
+      if(audio.paused){pausaManual=false;quiere=true;try{audio.volume=.7}catch(x){}intentar(!!audio.error)}
+      else{pausaManual=true;quiere=false;audio.pause()}
+    });
+    // Si el navegador no dejó sonar al abrir, el siguiente toque en la página la inicia
+    function primerToque(e){if(e&&e.target&&bm.contains(e.target))return;if(quiere&&!pausaManual&&audio.paused&&abierto){try{audio.volume=.7}catch(x){}intentar(!!audio.error)}}
+    document.addEventListener("touchend",primerToque,{passive:true});
+    document.addEventListener("click",primerToque);
+    document.addEventListener("visibilitychange",function(){if(document.hidden){if(!audio.paused)audio.pause()}else if(quiere&&!pausaManual&&abierto){audio.play().catch(function(){})}});
   }
   intro.addEventListener("click",abrir);
   document.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "||e.key==="Escape")abrir()});
