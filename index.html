@@ -179,6 +179,18 @@ body.cerrado{overflow:hidden}
 @keyframes latir{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 @keyframes respirar{0%,100%{opacity:.55}50%{opacity:1}}
 
+/* Música */
+.musica{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;width:52px;height:52px;border-radius:50%;border:1.5px solid var(--oro);cursor:pointer;display:grid;place-items:center;color:var(--oro);
+  background:radial-gradient(circle at 35% 30%,#fffaf0,var(--tarjeta));box-shadow:0 6px 18px -6px rgba(94,66,32,.5);padding:0;transition:transform .2s}
+.musica:hover{transform:scale(1.06)}
+.musica:focus-visible{outline:3px solid var(--salvia);outline-offset:3px}
+.musica svg{width:22px;height:22px}
+.musica .ic-pausa{display:none}
+.musica.sonando .ic-nota{display:none}
+.musica.sonando .ic-pausa{display:block}
+.musica.sonando::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1.5px solid var(--oro-claro);animation:onda 2s ease-out infinite}
+@keyframes onda{from{transform:scale(.9);opacity:.9}to{transform:scale(1.35);opacity:0}}
+
 /* Pétalos */
 #petalos{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
 
@@ -200,7 +212,7 @@ body.cerrado{overflow:hidden}
 @media (prefers-reduced-motion:reduce){
   .hex .marco{animation:none}
   .btn,.btn-oro{transition:none}
-  .sello,.intro-toca,.btn-oro,.brillo,.cuenta b.tic{animation:none}
+  .sello,.intro-toca,.btn-oro,.brillo,.cuenta b.tic,.musica.sonando::after{animation:none}
   .brillo{color:var(--oro)!important;background:none}
   .puerta,.intro-centro{transition-duration:.01s}
 }
@@ -219,6 +231,11 @@ body.cerrado{overflow:hidden}
   </div>
 </div>
 <canvas id="petalos" aria-hidden="true"></canvas>
+<audio id="cancion" src="musica/bailando-bachata.mp3" preload="none" loop></audio>
+<button class="musica" id="btn-musica" type="button" aria-label="Pausar música" hidden>
+  <svg class="ic-nota" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 18.5a3 3 0 1 1-2-2.83V5.5l12-2.5v11.5a3 3 0 1 1-2-2.83V7.6L9 9.3v9.2z"/></svg>
+  <svg class="ic-pausa" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg>
+</button>
 <main>
 
   <!-- Portada -->
@@ -428,6 +445,24 @@ body.cerrado{overflow:hidden}
     intro.classList.add("abierta");body.classList.remove("cerrado");
     setTimeout(function(){intro.remove()},reduce?50:1600);
     if(!reduce)setTimeout(petalos,500);
+    tocar();
+  }
+
+  // Música: parte al tocar el sello (los celulares exigen un toque antes de reproducir sonido)
+  var audio=document.getElementById("cancion"),bm=document.getElementById("btn-musica"),quiere=false;
+  function estado(on){bm.classList.toggle("sonando",on);bm.setAttribute("aria-label",on?"Pausar música":"Reproducir música")}
+  function subir(){try{audio.volume=0;var v=0,t=setInterval(function(){v+=.05;if(v>=.7){v=.7;clearInterval(t)}audio.volume=v},120)}catch(e){}}
+  function tocar(){
+    if(!audio)return;quiere=true;subir();
+    var pr=audio.play();
+    if(pr&&pr.then)pr.then(function(){bm.hidden=false;estado(true)},function(){if(audio.error)bm.hidden=true;else{bm.hidden=false;estado(false)}});
+  }
+  if(audio){
+    audio.addEventListener("error",function(){bm.hidden=true});
+    audio.addEventListener("play",function(){estado(true)});
+    audio.addEventListener("pause",function(){estado(false)});
+    bm.addEventListener("click",function(){if(audio.paused){quiere=true;audio.play().catch(function(){})}else{quiere=false;audio.pause()}});
+    document.addEventListener("visibilitychange",function(){if(document.hidden){if(!audio.paused)audio.pause()}else if(quiere&&abierto){audio.play().catch(function(){})}});
   }
   intro.addEventListener("click",abrir);
   document.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "||e.key==="Escape")abrir()});
